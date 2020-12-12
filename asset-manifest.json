@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/covid-in-perspective/static/css/main.25d7839c.chunk.css",
+    "main.js": "/covid-in-perspective/static/js/main.020449f1.chunk.js",
+    "main.js.map": "/covid-in-perspective/static/js/main.020449f1.chunk.js.map",
+    "runtime-main.js": "/covid-in-perspective/static/js/runtime-main.20a3e92c.js",
+    "runtime-main.js.map": "/covid-in-perspective/static/js/runtime-main.20a3e92c.js.map",
+    "static/js/2.3739620f.chunk.js": "/covid-in-perspective/static/js/2.3739620f.chunk.js",
+    "static/js/2.3739620f.chunk.js.map": "/covid-in-perspective/static/js/2.3739620f.chunk.js.map",
+    "static/js/3.fbfb3399.chunk.js": "/covid-in-perspective/static/js/3.fbfb3399.chunk.js",
+    "static/js/3.fbfb3399.chunk.js.map": "/covid-in-perspective/static/js/3.fbfb3399.chunk.js.map",
+    "index.html": "/covid-in-perspective/index.html",
+    "static/css/main.25d7839c.chunk.css.map": "/covid-in-perspective/static/css/main.25d7839c.chunk.css.map",
+    "static/js/2.3739620f.chunk.js.LICENSE.txt": "/covid-in-perspective/static/js/2.3739620f.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.20a3e92c.js",
+    "static/js/2.3739620f.chunk.js",
+    "static/css/main.25d7839c.chunk.css",
+    "static/js/main.020449f1.chunk.js"
+  ]
+}
