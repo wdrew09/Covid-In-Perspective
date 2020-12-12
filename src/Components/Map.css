@@ -1,0 +1,33 @@
+.Main {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.Map {
+    width: 85%;
+    height: max-content;
+}
+
+.BottomBar {
+    height: 100px;
+    width: 85%;
+    background-color: #774242;
+}
+
+.BottomBar span {
+    color: white;
+}
+
+.CountyData {
+    padding-top: 10px;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.CountyData div {
+    display: flex;
+    flex-direction: column;
+}

@@ -1,38 +1,81 @@
 .App {
   text-align: center;
+  width: 100vw;
+  background-color: #454545;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.TopArea {
+  width: 100%;
+  height: max-content;
+  display: flex;
+
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.Maps {
+  display: grid;
+  grid-template-columns: 50% 50%;
+  width: 85%;
+  padding: 10px;
+  margin-left: auto;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.Progress {
+  width: 20%;
+  padding-bottom: 20px;
+}
+
+.Spinner {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+  margin-top: 25%;
+}
+
+.Spinner  {
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.RigthSideBar {
+  background-color: #333333;
+  width: 25%;
+  flex-direction: column;
+  height: max-content;
+  padding-bottom: 50px;
+  margin: 15px;
+  margin-top: -85px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.Title {
+  color: #a3a3a3;
+  font-size: 3vw;
+  font-weight: 600;
+  width: 70%;
+  height: 100px;
+}
+
+.RightSideTitle {
+  font-size: 1.5vw;
+  width: 100%;
+  display: block;
+  margin-top: 10%;
+  font-weight: 700;
+}
+
+.RightSideNumber {
+  font-size: 3.5vw;
+  width: 100%;
+  display: block;
+  font-weight: 600;
+}
+
+.RightSideIncrease {
+  font-size: .8vw;
+  width: 100%;
+  display: block;
+  margin-bottom: 15%;
+  font-weight: 700;
+}
+
+.RetrievingData {
+  font-size: 1vw;
 }

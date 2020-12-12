@@ -16,8 +16,10 @@ function App() {
   const [finalCountyData, setFinalCountyData] = useState([])
   const [finalCountyProgress, setFinalCountyProgress] = useState(0)
   const [maskData, setMaskData] = useState([])
+  const [maskDataProgress, setMaskDataProgress] = useState(0)
   const [populationData, setPopulationData] = useState([])
   const [rawStatesData, setRawStatesData] = useState([])
+  const [generalCovidData, setGeneralCovidData] = useState([])
 
   const states = ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming']
 
@@ -31,7 +33,6 @@ function App() {
     var merged = [].concat.apply([], finalCountyData);
 
     merged.forEach(county => {
-      console.log(county)
       if (county.usuallyWearMask > .8 && county.pop > 0 && county.casesLast30) {
         totalPopUsually += parseInt(county.pop)
         totalCasesUsaully += parseInt(county.casesLast30)
@@ -54,22 +55,26 @@ function App() {
     }
   }, [rawStatesData])
 
+
   //When nyt data is populated, get recent county data
   //Note: must do them one by one in order to get data to match fips
   useEffect(() => {
     if (countyData.length > 3244) {
-      console.log('county length')
       if (finalCountyData.length < 1) {
 
-        const promises = states.map(state => fetch(`https://corona.lmao.ninja/v2/historical/usacounties/${state.toLowerCase()}?lastdays=30`));
-        console.log(promises)
-        let progress = 0
-        promises.forEach(p => p.then((response) => {
-          (response.json().then(function (data) {
-            setRawStatesData(rawStatesData => [...rawStatesData, data])
-          }))
-          progress++
-        }));
+        states.map(state =>
+          fetch(`https://corona.lmao.ninja/v2/historical/usacounties/${state.toLowerCase()}?lastdays=30`)
+            .then(res => res.json())
+            .then(
+              (result) => {
+                setRawStatesData(rawStatesData => [...rawStatesData, result])
+              },
+              (error) => {
+                console.log(error)
+              }
+            )
+        );
+
       }
     }
   }, [countyData.length])
@@ -80,7 +85,6 @@ function App() {
     if (populationData.length === 3221) {
       readRemoteFile('https://raw.githubusercontent.com/nytimes/covid-19-data/master/live/us-counties.csv', {
         complete: (results) => {
-          console.log(results)
           parseNYTData(results)
         },
       });
@@ -105,6 +109,17 @@ function App() {
         parseMaskData(results)
       },
     });
+
+    fetch("https://api.covidtracking.com/v1/us/daily.json")
+      .then(res => res.json())
+      .then(
+        (result) => {
+          parseGeneralData(result[0], result[1])
+        },
+        (error) => {
+          console.log(error)
+        }
+      )
   }, []);
 
   const curCasesColorScale = scaleQuantize()
@@ -124,15 +139,15 @@ function App() {
   const masksColorScale = scaleQuantize()
     .domain([.2, 1])
     .range([
-      "#ffedea",
-      "#ffcec5",
-      "#ffad9f",
-      "#ff8a75",
-      "#ff5533",
-      "#e2492d",
-      "#be3d26",
-      "#9a311f",
-      "#782618"
+      "#DADDDB",
+      "#D5D8D5",
+      "#C9D4C8",
+      "#B1C9AF",
+      "#99BE95",
+      "#80B679",
+      "#73B26B",
+      "#66AD5C",
+      "#5E9B50"
     ]);
 
   //matches the data from nyt and census to find overall population in counties
@@ -151,6 +166,25 @@ function App() {
     if (val) {
       return val.usually
     }
+  }
+
+  const parseGeneralData = (results, resultsYesterday) => {
+    let newResults = {
+      deaths: results.death,
+      deathsIncrease: results.deathIncrease,
+      hospitalized: results.hospitalizedCurrently,
+      hospitalizedIncrease: results.hospitalizedIncrease,
+      icu: results.inIcuCurrently,
+      icuIncrease: results.inIcuCurrently - resultsYesterday.inIcuCurrently,
+      ventilator: results.onVentilatorCurrently,
+      ventilatorIncrease: results.onVentilatorCurrently - resultsYesterday.onVentilatorCurrently,
+      positive: results.positive,
+      positiveIncrease: results.positiveIncrease,
+      recovered: results.recovered,
+      recoveredIncrease: results.recovered - resultsYesterday.recovered,
+
+    }
+    setGeneralCovidData(newResults)
   }
 
   //takes covid data from nyt and puts it in easier to read array of objects
@@ -194,18 +228,20 @@ function App() {
         }
         let popTemp = findPopulation(fipsVal)
         let usuallyMaskTemp = findMaskFrequency(fipsVal)
+        console.log(row)
         return {
           county: row.county,
           state: row.province,
           fips: fipsVal,
           casesLast30: Object.values(row.timeline.cases)[29] - Object.values(row.timeline.cases)[0],
+          deaths: Object.values(row.timeline.deaths)[29],
           pop: popTemp,
           usuallyWearMask: usuallyMaskTemp,
-          color: curCasesColorScale((Object.values(row.timeline.cases)[29] - Object.values(row.timeline.cases)[0]) / popTemp)
+          color: curCasesColorScale((Object.values(row.timeline.cases)[29] - Object.values(row.timeline.cases)[0]) / popTemp),
+          maskColor: masksColorScale(usuallyMaskTemp)
         }
       })
     })
-    console.log(newResults)
     setFinalCountyData(newResults)
   }
 
@@ -225,28 +261,64 @@ function App() {
     let newResults = results.data.map(row => {
       let tempUsually = parseFloat(row[5]) + parseFloat(row[4])
       let tempUsuallyNot = parseFloat(row[1]) + parseFloat(row[2]) + parseFloat(row[3])
+      setMaskDataProgress(maskDataProgress + 0.0318066)
       return {
         fips: row[0],
         usually: tempUsually,
         usuallyNot: tempUsuallyNot,
         color: masksColorScale(tempUsually)
       }
+
     })
     setMaskData(newResults)
   }
 
   return (
     <div className="App">
-      {finalCountyData.length == 50 ?
-        <Map
-          data={[].concat.apply([], finalCountyData)}
-        />
-        :
-        <Line percent={finalCountyProgress} strokeWidth="1" strokeColor="#2db7f5" />
-      }
-      <Map
-        data={maskData}
-      />
+      <div className="Title">Covid In Perspective</div>
+      <div className="TopArea">
+        <div className="Maps">
+          {finalCountyData.length == 50
+            ?
+            <Map data={[].concat.apply([], finalCountyData)} maskData={false}/>
+            :
+            <div className="Spinner">
+              <Circle className="Progress" percent={finalCountyProgress * 2} strokeWidth="8" trailWidth="8" strokeColor="#2db7f5" />
+              <span>Retrieving the most up to date information...</span>
+            </div>
+          }
+          {finalCountyData.length == 50
+            ?
+            <Map data={[].concat.apply([], finalCountyData)} maskData={true}/>
+            :
+            <div className="Spinner">
+              <Circle className="Progress" percent={finalCountyProgress * 2} strokeWidth="8" trailWidth="8" strokeColor="#2db7f5" />
+              <span>Retrieving the most up to date information...</span>
+            </div>
+          }
+
+        </div>
+        <div className="RigthSideBar">
+          <span className="RightSideTitle" style={{ color: '#E63946' }}>Deaths</span>
+          <span className="RightSideNumber" style={{ color: '#E63946' }}>{generalCovidData.deaths ? generalCovidData.deaths : <span className="RetrievingData">Retrieving Data...</span>}</span>
+          <span className="RightSideIncrease" style={{ color: '#E63946' }}>+{generalCovidData.deathsIncrease} from yesterday</span>
+          <span className="RightSideTitle" style={{ color: '#457B9D' }}>Positive Cases</span>
+          <span className="RightSideNumber" style={{ color: '#457B9D' }}>{generalCovidData.positive ? generalCovidData.positive : <span className="RetrievingData">Retrieving Data...</span>}</span>
+          <span className="RightSideIncrease" style={{ color: '#457B9D' }}>+{generalCovidData.positiveIncrease} from yesterday</span>
+          <span className="RightSideTitle" style={{ color: '#E4DB25' }}>Hospitalized</span>
+          <span className="RightSideNumber" style={{ color: '#E4DB25' }}>{generalCovidData.hospitalized ? generalCovidData.hospitalized : <span className="RetrievingData">Retrieving Data...</span>}</span>
+          <span className="RightSideIncrease" style={{ color: '#E4DB25' }}>+{generalCovidData.hospitalizedIncrease} from yesterday</span>
+          <span className="RightSideTitle" style={{ color: '#007F5F' }}>In ICU</span>
+          <span className="RightSideNumber" style={{ color: '#007F5F' }}>{generalCovidData.icu ? generalCovidData.icu : <span className="RetrievingData">Retrieving Data...</span>}</span>
+          <span className="RightSideIncrease" style={{ color: '#007F5F' }}>+{generalCovidData.icuIncrease} from yesterday</span>
+          <span className="RightSideTitle" style={{ color: '#F3722C' }}>On Ventilator</span>
+          <span className="RightSideNumber" style={{ color: '#F3722C' }}>{generalCovidData.ventilator ? generalCovidData.ventilator : <span className="RetrievingData">Retrieving Data...</span>}</span>
+          <span className="RightSideIncrease" style={{ color: '#F3722C' }}>+{generalCovidData.ventilatorIncrease} from yesterday</span>
+          <span className="RightSideTitle" style={{ color: '#4361EE' }}>Recovered</span>
+          <span className="RightSideNumber" style={{ color: '#4361EE' }}>{generalCovidData.recovered ? generalCovidData.recovered : <span className="RetrievingData">Retrieving Data...</span>}</span>
+          <span className="RightSideIncrease" style={{ color: '#4361EE' }}>+{generalCovidData.recoveredIncrease} from yesterday</span>
+        </div>
+      </div>
     </div>
   );
 }

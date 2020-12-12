@@ -5,7 +5,6 @@ const Popup = (props) => {
         state
     } = props
 
-    console.log('hret')
     return (
         <div className="Main">
             {state}
