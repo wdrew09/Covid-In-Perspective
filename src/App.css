@@ -14,14 +14,27 @@
 .Maps {
   display: grid;
   grid-template-columns: 50% 50%;
-  width: 85%;
-  padding: 10px;
-  margin-left: auto;
+  width: 100%;
+  /* margin-left: auto; */
+  margin-right: 0px;
+  height: max-content;
+}
+
+.MapTitle {
+  color: #dddddd;
+  font-size: 1.5vw;
+  font-weight: 600;
 }
 
 .Progress {
   width: 20%;
   padding-bottom: 20px;
+}
+
+.LeftSide {
+  width: 75%;
+  display: flex;
+  flex-direction: column;
 }
 
 .Spinner {
@@ -46,11 +59,12 @@
 }
 
 .Title {
-  color: #a3a3a3;
+  color: #dddddd;
   font-size: 3vw;
   font-weight: 600;
-  width: 70%;
+  width: 80%;
   height: 100px;
+  text-decoration: underline;
 }
 
 .RightSideTitle {
@@ -78,4 +92,22 @@
 
 .RetrievingData {
   font-size: 1vw;
+}
+
+.BottomData {
+  margin-top: 5%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-left: 3.5%;
+}
+
+.BottomData span {
+  color: #dddddd;
+  text-align: left;
+}
+
+.BottomData span:nth-child(1) {
+  font-size: 2vw;
+  font-weight: 600;
 }

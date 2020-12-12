@@ -21,6 +21,8 @@ function App() {
   const [rawStatesData, setRawStatesData] = useState([])
   const [generalCovidData, setGeneralCovidData] = useState([])
 
+  const [moreLikelyPercent, setMoreLikelyPercent] = useState(0)
+
   const states = ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming']
 
   //when final data is finished, calculate some notable results
@@ -41,10 +43,7 @@ function App() {
         totalCasesNotUsually += parseInt(county.casesLast30)
       }
     })
-    console.log('usually wears:')
-    console.log(totalCasesUsaully + '  ' + totalPopUsually + '  ' + totalCasesUsaully / totalPopUsually);
-    console.log('does not usually wear:')
-    console.log(totalCasesNotUsually + '  ' + totalPopNotUsually + '  ' + totalCasesNotUsually / totalPopNotUsually)
+    setMoreLikelyPercent((((totalCasesNotUsually / totalPopNotUsually) - (totalCasesUsaully / totalPopUsually)) / (totalCasesUsaully / totalPopUsually))*100)
   }, [finalCountyData])
 
   //When the data from counties is collected, make readable
@@ -277,26 +276,42 @@ function App() {
     <div className="App">
       <div className="Title">Covid In Perspective</div>
       <div className="TopArea">
-        <div className="Maps">
-          {finalCountyData.length == 50
-            ?
-            <Map data={[].concat.apply([], finalCountyData)} maskData={false}/>
-            :
-            <div className="Spinner">
-              <Circle className="Progress" percent={finalCountyProgress * 2} strokeWidth="8" trailWidth="8" strokeColor="#2db7f5" />
-              <span>Retrieving the most up to date information...</span>
-            </div>
-          }
-          {finalCountyData.length == 50
-            ?
-            <Map data={[].concat.apply([], finalCountyData)} maskData={true}/>
-            :
-            <div className="Spinner">
-              <Circle className="Progress" percent={finalCountyProgress * 2} strokeWidth="8" trailWidth="8" strokeColor="#2db7f5" />
-              <span>Retrieving the most up to date information...</span>
-            </div>
-          }
+        <div className="LeftSide">
+          <div className="Maps">
+            {finalCountyData.length == 50
+              ?
+              <div style={{ height: 'max-content' }}>
+                <span className="MapTitle">Cases In Last 30 Days Per Capita</span>
+                <Map data={[].concat.apply([], finalCountyData)} maskData={false} keyTitle={"Case Count"} gradientColorRight={"#782618"} gradientColorLeft={"#ffedea"} />
+              </div>
+              :
+              <div className="Spinner">
+                <Circle className="Progress" percent={finalCountyProgress * 2} strokeWidth="8" trailWidth="8" strokeColor="#2db7f5" />
+                <span>Retrieving the most up to date information...</span>
+              </div>
+            }
+            {finalCountyData.length == 50
+              ?
+              <div style={{ height: 'max-content' }}>
+                <span className="MapTitle">Mask Usage by County</span>
+                <Map data={[].concat.apply([], finalCountyData)} maskData={true} keyTitle={"Mask Usage"} gradientColorRight={"#5E9B50"} gradientColorLeft={"#DADDDB"} />
+              </div>
+              :
+              <div className="Spinner">
+                <Circle className="Progress" percent={finalCountyProgress * 2} strokeWidth="8" trailWidth="8" strokeColor="#2db7f5" />
+                <span>Retrieving the most up to date information...</span>
+              </div>
+            }
 
+          </div>
+          <div className="BottomData">
+            <span>The Bottom Line</span>
+            <span>In counties where at least 80% of people frequently or always wear a mask, they were <b>{moreLikelyPercent.toFixed(1)}% Less Likely</b> to contract Coronavirus in the last 30 days. </span>
+          </div>
+          <div className="BottomData">
+            <span>Disclaimer</span>
+            <span>Data is collected from the NYT and Dynata, corona.lmao.ninja, the Census Bureau, and covidtracking.com. Mask usage data is based on roughly 250,000 interviews done by the NYT and Dynata . "Usually Wear Mask" on this website refers to data where the respondent answered that they frequently or always wear when asked "How often do you wear a mask in public when you expect to be within six feet of another person?"</span>
+          </div>
         </div>
         <div className="RigthSideBar">
           <span className="RightSideTitle" style={{ color: '#E63946' }}>Deaths</span>
@@ -319,6 +334,7 @@ function App() {
           <span className="RightSideIncrease" style={{ color: '#4361EE' }}>+{generalCovidData.recoveredIncrease} from yesterday</span>
         </div>
       </div>
+
     </div>
   );
 }
