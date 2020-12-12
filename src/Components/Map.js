@@ -62,21 +62,21 @@ const MapChart = (props) => {
                 {clicked ?
                     <div>
                         <span>
-                            <span>{capitalizeFirstLetter(clickedData.county)} County - </span>
-                            <span>{capitalizeFirstLetter(clickedData.state)}</span>
+                            <span className="CountyDataTitle">{capitalizeFirstLetter(clickedData.county)} County - </span>
+                            <span className="CountyDataTitle">{capitalizeFirstLetter(clickedData.state)}</span>
                         </span>
                         <span className="CountyData">
                             <div>
-                                <span>Usually Wear Mask</span>
-                                <span style={{ fontSize: "1.75vw" }}>{(clickedData.usuallyWearMask * 100).toFixed(1)}%</span>
+                                <span className="CountyDataTitle">Usually Wear Mask</span>
+                                <span className="CountyDataNumber">{(clickedData.usuallyWearMask * 100).toFixed(1)}%</span>
                             </div>
                             <div>
-                                <span>Deaths</span>
-                                <span style={{ fontSize: "1.75vw" }}>{clickedData.deaths*1}</span>
+                                <span className="CountyDataTitle">Deaths</span>
+                                <span className="CountyDataNumber">{clickedData.deaths*1}</span>
                             </div>
                             <div>
-                                <span>Infected Pop. - Last 30 Days</span>
-                                <span style={{ fontSize: "1.75vw" }}>{((clickedData.casesLast30 / clickedData.pop) * 100).toFixed(1)}%</span>
+                                <span className="CountyDataTitle">Infected Pop. - Last 30 Days</span>
+                                <span className="CountyDataNumber">{((clickedData.casesLast30 / clickedData.pop) * 100).toFixed(1)}%</span>
                             </div>
                         </span>
                     </div>
