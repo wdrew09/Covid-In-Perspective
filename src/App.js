@@ -280,7 +280,7 @@ function App() {
           <div className="Maps">
             {finalCountyData.length == 50
               ?
-              <div style={{ height: 'max-content' }}>
+              <div style={{ width: '100%' }}>
                 <span className="MapTitle">Cases In Last 30 Days Per Capita</span>
                 <Map data={[].concat.apply([], finalCountyData)} maskData={false} keyTitle={"Case Count"} gradientColorRight={"#782618"} gradientColorLeft={"#ffedea"} />
               </div>
@@ -292,7 +292,7 @@ function App() {
             }
             {finalCountyData.length == 50
               ?
-              <div style={{ height: 'max-content' }}>
+              <div style={{ width: '100%' }}>
                 <span className="MapTitle">Mask Usage by County</span>
                 <Map data={[].concat.apply([], finalCountyData)} maskData={true} keyTitle={"Mask Usage"} gradientColorRight={"#5E9B50"} gradientColorLeft={"#DADDDB"} />
               </div>
