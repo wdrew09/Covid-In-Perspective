@@ -309,7 +309,7 @@ function App() {
             <span>In counties where at least 80% of people frequently or always wear a mask, they were <b>{moreLikelyPercent.toFixed(1)}% Less Likely</b> to contract Coronavirus in the last 30 days. </span>
           </div>
           <div className="BottomData">
-            <span>Disclaimer testing 123</span>
+            <span>Disclaimer</span>
             <span>Data is collected from the NYT and Dynata, corona.lmao.ninja, the Census Bureau, and covidtracking.com. Mask usage data is based on roughly 250,000 interviews done by the NYT and Dynata . "Usually Wear Mask" on this website refers to data where the respondent answered that they frequently or always wear when asked "How often do you wear a mask in public when you expect to be within six feet of another person?"</span>
           </div>
         </div>
